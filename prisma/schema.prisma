@@ -1,0 +1,214 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String
+  email         String    @unique
+  phone         String?   @unique
+  passwordHash  String    @map("password_hash")
+  role          Role      @default(CUSTOMER)
+  profilePhoto  String?   @map("profile_photo")
+  address       String?   @db.Text
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
+  isActive      Boolean   @default(true) @map("is_active")
+  
+  provider      Provider?
+  bookings      Booking[]
+  reviews       Review[]
+
+  @@map("users")
+}
+
+enum Role {
+  ADMIN
+  PROVIDER
+  CUSTOMER
+}
+
+model Provider {
+  id                   String              @id @default(cuid())
+  userId               String              @unique @map("user_id")
+  businessName         String              @map("business_name")
+  skills               String?             @db.Text
+  experienceYears      Int                 @map("experience_years")
+  verificationStatus   VerificationStatus  @default(PENDING) @map("verification_status")
+  verificationDocuments String?            @map("verification_documents") @db.Text
+  rating               Float               @default(0)
+  totalReviews         Int                 @default(0) @map("total_reviews")
+  createdAt            DateTime            @default(now()) @map("created_at")
+  
+  user                 User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  services             Service[]
+  bookings             Booking[]
+  reviews              Review[]
+  wallet               Wallet?
+
+  @@map("providers")
+}
+
+enum VerificationStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+model Category {
+  id          String    @id @default(cuid())
+  name        String    @unique
+  description String?   @db.Text
+  icon        String?
+  createdAt   DateTime  @default(now()) @map("created_at")
+  
+  services    Service[]
+
+  @@map("categories")
+}
+
+model Service {
+  id              String    @id @default(cuid())
+  providerId      String    @map("provider_id")
+  categoryId      String    @map("category_id")
+  title           String
+  description     String    @db.Text
+  price           Float
+  durationMinutes Int       @map("duration_minutes")
+  isActive        Boolean   @default(true) @map("is_active")
+  createdAt       DateTime  @default(now()) @map("created_at")
+  updatedAt       DateTime  @updatedAt @map("updated_at")
+  
+  provider        Provider  @relation(fields: [providerId], references: [id], onDelete: Cascade)
+  category        Category  @relation(fields: [categoryId], references: [id])
+  bookings        Booking[]
+
+  @@index([providerId])
+  @@index([categoryId])
+  @@map("services")
+}
+
+model Booking {
+  id               String        @id @default(cuid())
+  customerId       String        @map("customer_id")
+  serviceId        String        @map("service_id")
+  providerId       String        @map("provider_id")
+  bookingDate      DateTime      @map("booking_date")
+  bookingTime      String        @map("booking_time")
+  status           BookingStatus @default(PENDING)
+  address          String        @db.Text
+  totalAmount      Float         @map("total_amount")
+  commissionAmount Float         @map("commission_amount")
+  notes            String?       @db.Text
+  createdAt        DateTime      @default(now()) @map("created_at")
+  updatedAt        DateTime      @updatedAt @map("updated_at")
+  
+  customer         User          @relation(fields: [customerId], references: [id])
+  service          Service       @relation(fields: [serviceId], references: [id])
+  provider         Provider      @relation(fields: [providerId], references: [id])
+  payment          Payment?
+  review           Review?
+
+  @@index([customerId])
+  @@index([serviceId])
+  @@index([providerId])
+  @@map("bookings")
+}
+
+enum BookingStatus {
+  PENDING
+  CONFIRMED
+  COMPLETED
+  CANCELLED
+}
+
+model Payment {
+  id               String        @id @default(cuid())
+  bookingId        String        @unique @map("booking_id")
+  amount           Float
+  commissionAmount Float         @map("commission_amount")
+  paymentMethod    String        @map("payment_method")
+  transactionId    String?       @map("transaction_id")
+  status           PaymentStatus @default(PENDING)
+  paymentDate      DateTime?     @map("payment_date")
+  createdAt        DateTime      @default(now()) @map("created_at")
+  
+  booking          Booking       @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+
+  @@map("payments")
+}
+
+enum PaymentStatus {
+  PENDING
+  COMPLETED
+  FAILED
+  REFUNDED
+}
+
+model Wallet {
+  id             String              @id @default(cuid())
+  providerId     String              @unique @map("provider_id")
+  balance        Float               @default(0)
+  totalEarned    Float               @default(0) @map("total_earned")
+  totalWithdrawn Float               @default(0) @map("total_withdrawn")
+  updatedAt      DateTime            @updatedAt @map("updated_at")
+  
+  provider       Provider            @relation(fields: [providerId], references: [id], onDelete: Cascade)
+  transactions   WalletTransaction[]
+
+  @@map("wallets")
+}
+
+model WalletTransaction {
+  id              String              @id @default(cuid())
+  walletId        String              @map("wallet_id")
+  transactionType TransactionType     @map("transaction_type")
+  amount          Float
+  description     String?             @db.Text
+  createdAt       DateTime            @default(now()) @map("created_at")
+  
+  wallet          Wallet              @relation(fields: [walletId], references: [id], onDelete: Cascade)
+
+  @@index([walletId])
+  @@map("wallet_transactions")
+}
+
+enum TransactionType {
+  CREDIT
+  DEBIT
+  WITHDRAWAL
+}
+
+model Review {
+  id         String   @id @default(cuid())
+  bookingId  String   @unique @map("booking_id")
+  customerId String   @map("customer_id")
+  providerId String   @map("provider_id")
+  rating     Int
+  comment    String?  @db.Text
+  createdAt  DateTime @default(now()) @map("created_at")
+  
+  booking    Booking  @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  customer   User     @relation(fields: [customerId], references: [id])
+  provider   Provider @relation(fields: [providerId], references: [id])
+
+  @@index([providerId])
+  @@map("reviews")
+}
+
+model AdminSetting {
+  id           String   @id @default(cuid())
+  settingKey   String   @unique @map("setting_key")
+  settingValue String   @map("setting_value") @db.Text
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  @@map("admin_settings")
+}
