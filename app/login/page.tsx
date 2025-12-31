@@ -113,7 +113,7 @@ export default function LoginPage() {
             </div>
 
             {/* Form */}
-            <form onSubmit={handleSubmit} className="space-y-5">
+            <form onSubmit={handleSubmit} className="space-y-4">
               {error && (
                 <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
                   {error}
@@ -128,7 +128,7 @@ export default function LoginPage() {
                   id="email"
                   type="email"
                   placeholder="your@email.com"
-                  className="h-12 text-base"
+                  className="h-11 text-base"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
@@ -149,7 +149,7 @@ export default function LoginPage() {
                   id="password"
                   type="password"
                   placeholder="Enter your password"
-                  className="h-12 text-base"
+                  className="h-11 text-base"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
@@ -159,7 +159,7 @@ export default function LoginPage() {
 
               <Button
                 type="submit"
-                className="w-full h-12 bg-[#ff6b35] hover:bg-[#e55a2b] text-white font-semibold text-base rounded-lg transition-colors"
+                className="w-full h-11 bg-[#ff6b35] hover:bg-[#e55a2b] text-white font-semibold text-base rounded-lg transition-colors"
                 disabled={loading}
               >
                 {loading ? 'Signing in...' : 'Sign In'}
@@ -181,7 +181,7 @@ export default function LoginPage() {
               <Button
                 type="button"
                 variant="outline"
-                className="w-full h-12 border-2 border-[#1a2c3d] text-[#1a2c3d] hover:bg-[#1a2c3d] hover:text-white font-semibold text-base rounded-lg transition-colors"
+                className="w-full h-11 border-2 border-[#1a2c3d] text-[#1a2c3d] hover:bg-[#1a2c3d] hover:text-white font-semibold text-base rounded-lg transition-colors"
               >
                 Create New Account
               </Button>

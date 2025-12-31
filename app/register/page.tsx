@@ -252,7 +252,7 @@ export default function RegisterPage() {
 
               <Button
                 type="submit"
-                className="w-full h-12 bg-[#ff6b35] hover:bg-[#e55a2b] text-white font-semibold text-base rounded-lg transition-colors mt-6"
+                className="w-full h-11 bg-[#ff6b35] hover:bg-[#e55a2b] text-white font-semibold text-base rounded-lg transition-colors mt-6"
                 disabled={loading}
               >
                 {loading ? 'Creating Account...' : 'Create Account'}
@@ -274,7 +274,7 @@ export default function RegisterPage() {
               <Button
                 type="button"
                 variant="outline"
-                className="w-full h-12 border-2 border-[#1a2c3d] text-[#1a2c3d] hover:bg-[#1a2c3d] hover:text-white font-semibold text-base rounded-lg transition-colors"
+                className="w-full h-11 border-2 border-[#1a2c3d] text-[#1a2c3d] hover:bg-[#1a2c3d] hover:text-white font-semibold text-base rounded-lg transition-colors"
               >
                 Sign In Instead
               </Button>
