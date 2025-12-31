@@ -26,11 +26,11 @@ export function Header() {
             <Link href="/become-provider" className="hover:text-secondary transition-colors">
               Become a Provider
             </Link>
-            <Link href="/api/auth/login" className="hover:text-secondary transition-colors">
+            <Link href="/login" className="hover:text-secondary transition-colors">
               Login
             </Link>
             <Link 
-              href="/api/auth/register" 
+              href="/register" 
               className="bg-secondary hover:bg-secondary-600 px-6 py-2 rounded-lg font-semibold transition-colors"
             >
               Sign Up
@@ -86,14 +86,14 @@ export function Header() {
               Become a Provider
             </Link>
             <Link
-              href="/api/auth/login"
+              href="/login"
               className="block py-2 hover:text-secondary transition-colors"
               onClick={() => setIsMenuOpen(false)}
             >
               Login
             </Link>
             <Link
-              href="/api/auth/register"
+              href="/register"
               className="block bg-secondary hover:bg-secondary-600 px-6 py-2 rounded-lg font-semibold transition-colors text-center"
               onClick={() => setIsMenuOpen(false)}
             >
